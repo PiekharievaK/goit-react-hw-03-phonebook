@@ -1,0 +1,42 @@
+@media screen and (max-width: 767px) {
+  .form {
+    align-items: center;
+  }
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.input {
+  margin-bottom: 30px;
+  height: 30px;
+  border-radius: 5px;
+
+  width: 250px;
+}
+
+.button {
+  font-size: 18px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  width: 150px;
+  margin-left: 12px;
+  margin-bottom: 30px;
+  background-color: #96d4d4;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #5eb9b9c9;
+}
