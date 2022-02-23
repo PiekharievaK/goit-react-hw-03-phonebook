@@ -15,12 +15,25 @@ class App extends Component {
     name: '',
   };
 
+  componentDidMount() {
+    if (!localStorage.getItem('contacts')) {
+      return;
+    }
+    this.setState({ contacts: JSON.parse(localStorage.getItem('contacts')) });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts === this.state.contacts) {
+      return;
+    }
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
+
   saveContact = data => {
     const shortid = require('shortid');
 
     const { name, number } = data;
     const contactInfo = { id: shortid(), name: name, number: number };
-
     this.setState(prevState => ({
       contacts: [contactInfo, ...prevState.contacts],
     }));
@@ -52,19 +65,20 @@ class App extends Component {
   //   Дополнительный функционал
   changeInfo = e => {
     const contacts = this.state.contacts;
+    const contact = contacts.find(contact => contact.id === e.target.id);
 
     Confirm.prompt(
       'Choose what you want to change',
-      'Please fill in the field.' +
-        ' You also can cancel the change after selecting the option',
+      `Edit contact '${contact.name}'. ` +
+        'You can also cancel editing if you leave the field blank and select the option',
       '',
       'Name',
       'Number',
       clientAnswer => {
-        const test = contacts.find(contact => contact.id === e.target.id);
         if (clientAnswer.trim().length === 0 || !!Number(clientAnswer)) {
-          window.alert(`
-          There is a mistake somewhere, try again. Contact name should include letters`);
+          window.alert(
+            `There is a mistake somewhere. Contact name should include letters`
+          );
           return;
         }
         const result = window.confirm(
@@ -74,15 +88,15 @@ class App extends Component {
           return;
         }
 
-        test.name = clientAnswer;
+        contact.name = clientAnswer;
+        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
         this.setState({ contacts: this.state.contacts });
       },
 
       clientAnswer => {
-        const test = contacts.find(contact => contact.id === e.target.id);
         if (clientAnswer.trim().length === 0 || !Number(clientAnswer)) {
           window.alert(
-            ` There is a mistake somewhere, try again. Phone number should include just numbers and acceptably '+' '-' symbols  `
+            `There is a mistake somewhere. Phone number should include just numbers and acceptably '+' '-' symbols.`
           );
           return;
         }
@@ -93,12 +107,11 @@ class App extends Component {
           return;
         }
 
-        test.number = clientAnswer;
+        contact.number = clientAnswer;
+        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
         this.setState({ contacts: this.state.contacts });
       },
-      {
-        placeholder: 'Please fill the field',
-      }
+      {}
     );
   };
 
